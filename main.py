@@ -1,6 +1,62 @@
 import os
 from entities import *
 import random
+def status_screen():
+	global active_player
+	print(f"Status. Balance: {active_player.coins}")
+	if len(active_player.properties)==0:
+		print("You don't have any properties")
+		return "ranchmenu"
+	for index, house in enumerate(active_player.properties,start=1):
+		print(f"{index}. {house.name} capacity: {len(house.occupants)}/{house.max_capacity}")
+		if len(house.occupants)>0:
+			for occupant in house.occupants:
+				print(occupant)
+
+		else:
+			print("no occupants")
+	return "ranchmenu"
+def manage_house_menu():
+	global active_player
+	global active_house
+	for index, house in enumerate(active_player.properties,start=1):
+		print(f"{index}. {house.name}. dirt level: {house.dirt_level}")
+	cancel=len(active_player.properties)+1
+	print(f"{cancel}. go back")
+	choice=input("select an option")
+	if choice.isdigit():
+		if choice==cancel:
+			return "ranchmenu"
+		active_house=active_player.properties[int(choice)-1]
+		return "specifichousemenu"
+	else:
+		print("invalid choice")
+	return "ranchmenu"
+def manage_specific_house():
+	global active_house
+	global active_player
+	print(f"{active_house.name}.")
+	print("1. Feed")
+	print("2. water")
+	print("3. clean")
+	print("4. move to storage.")
+	print("5. storage")
+	print("6. go back")
+	choice=input("select an option")
+	match choice:
+		case "1":
+			print("in development")
+
+		case "2":
+			print("in development")
+		case "3":
+			active_house.clean()
+		case "6":
+			return "managehousemenu"
+		case _:
+			print("invalid choice")
+	return "managehousemenu"
+
 def buy_housing():
 	global active_player
 	print("1. chicken coop.")
@@ -42,6 +98,9 @@ def buy_birds():
 				else:
 					print("buy more housing")
 					active_player.coins+=100
+					print(f"Balance:{active_player.coins}")
+			else:
+				print(f"insufficient funds. Balance:{active_player.coins}")
 		case "2":
 			return "buymenu"
 		case _:
@@ -201,15 +260,14 @@ def ranch_menu():
 		case "2":
 			return "buybirdsmenu"
 		case "3":
-			print("In development.")
-			return "ranchmenu"
+			return "managehousemenu"
 		case "4":
 			print("In development.")
 			return "ranchmenu"
 		
 		case "5":
-			print("In development.")
-			return "ranchmenu"
+			return "statusscreen"
+
 		
 		case "6":
 			print("In development.")
@@ -225,6 +283,7 @@ current_state = "mainmenu"
 print("Welcome to Farm Simulator!")
 name=input("enter your name")
 active_player=Player(name)
+active_house=None
 while current_state != "exit":
 	match current_state:
 		case "mainmenu":
@@ -246,6 +305,12 @@ while current_state != "exit":
 			current_state=buy_housing()
 		case "buybirdsmenu":
 			current_state=buy_birds()
+		case "statusscreen":
+			current_state=status_screen()
+		case "managehousemenu":
+			current_state=manage_house_menu()
+		case "specifichousemenu":
+			current_state=manage_specific_house()
 		case _:
 			print("Unknown State.")
 			current_state = "exit"
