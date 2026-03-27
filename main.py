@@ -1,6 +1,52 @@
 import os
 from entities import *
 import random
+def sell_menu():
+	global active_player
+	print("1. Sell birds.")
+	print("2. sell eggs.")
+	print("3. sell house.")
+	print("4. go back")
+	choice=input("select an option")
+	match choice:
+		case "1":
+			return "sellbirdsmenu"
+		case "2":
+			print("in development")
+		case "3":
+			return "sellhousemenu"
+		case "4":
+			return "ranchmenu"
+		case _:
+			print("invalid choice")
+			return "sellmenu"
+
+def sell_house_menu():
+	global active_player
+	for index,house in enumerate(active_player.properties,start=1):
+		print (f"{index}. {house.name} contains {len(house.occupants)}")
+	cancel=len(active_player.properties)+1
+
+	print(f"{cancel}. go back")
+	building_choice=input("select an option")
+	if building_choice==cancel:
+		return "sellmenu"
+	if building_choice.isdigit() and 1<= int(building_choice) <= len(active_player.properties):
+		building_choice=int(building_choice)
+		target_house=active_player.properties[building_choice-1]
+
+		if len(target_house.occupants)>0:
+			print(f"{target_house.name} is not empty, so it can't be sold")
+			return "sellmenu"
+		else:
+			active_player.properties.pop(building_choice-1)
+			print(f"successfully sold {target_house.name}")
+			return "sellmenu"
+	else:
+		print("invalid choice")
+		return "sellmenu"
+
+
 def status_screen():
 	global active_player
 	print(f"Status. Balance: {active_player.coins}")
@@ -258,7 +304,7 @@ def ranch_menu():
 			
 			return "buymenu"
 		case "2":
-			return "buybirdsmenu"
+			return "sellmenu"
 		case "3":
 			return "managehousemenu"
 		case "4":
@@ -311,6 +357,11 @@ while current_state != "exit":
 			current_state=manage_house_menu()
 		case "specifichousemenu":
 			current_state=manage_specific_house()
+		case "sellmenu":
+			current_state=sell_menu()
+		case "sellhousemenu":
+			current_state=sell_house_menu()
+	
 		case _:
 			print("Unknown State.")
 			current_state = "exit"
