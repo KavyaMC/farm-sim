@@ -1,2 +1,0 @@
-name:Kavya
-coins:160

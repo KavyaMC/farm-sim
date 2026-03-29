@@ -24,6 +24,7 @@ class Duck (Bird):
 class Turkey(Bird):
 	def __init__(selff,gender):
 		super().__init__("turkey",gender,300)
+
 class Housing:
 	def __init__(self,name,max_capacity):
 		self.name=name
